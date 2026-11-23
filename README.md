@@ -14,7 +14,7 @@ Job searching creates a surprising amount of operational work: keeping applicati
 - Search and filter applications by status or keyword.
 - See pipeline totals, response rate, upcoming follow-ups, and recent activity.
 - Compare resume text with a job description to get an explainable match score and useful keyword gaps.
-- Persist data locally in SQLite; no account, API key, or external service required.
+- Persist data locally in SQLite using Python's built-in `sqlite3`; no account, API key, or database package required.
 - Use a responsive dashboard and a documented JSON API.
 
 ## Run locally
@@ -29,7 +29,7 @@ pip install -e .
 uvicorn applywise.main:app --reload
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Interactive API docs are at `/docs`. The database is created as `applywise.db` in the current directory; set `APPLYWISE_DATABASE_URL` to use another SQLAlchemy database URL.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Interactive API docs are at `/docs`. The database is created as `applywise.db` in the current directory; set `APPLYWISE_DATABASE_PATH` to choose a different file.
 
 To preview the dashboard with fictional examples, stop the server and run `python -m applywise.seed_demo`, then start the server again. Demo data is only inserted into an empty database.
 
@@ -48,7 +48,7 @@ To preview the dashboard with fictional examples, stop the server and run `pytho
 
 The matching service uses normalized term frequency and inverse document frequency (TF–IDF) across the two pasted texts to rank shared and missing terms. It intentionally ignores common stop words and short tokens. The result is an assistive signal, not a hiring prediction: role language varies, and a candidate should review the suggested gaps in context.
 
-The API uses Pydantic validation and SQLAlchemy persistence. The browser interface is plain HTML, CSS, and JavaScript so the project stays easy to run and inspect without a frontend build tool.
+The API uses Pydantic validation and Python's standard-library SQLite support. The browser interface is plain HTML, CSS, and JavaScript so the project stays easy to run and inspect without a frontend build tool.
 
 ## Project structure
 
@@ -56,8 +56,8 @@ The API uses Pydantic validation and SQLAlchemy persistence. The browser interfa
 applywise/
 ├── applywise/
 │   ├── main.py          # FastAPI routes and app setup
-│   ├── database.py      # SQLite/SQLAlchemy configuration
-│   ├── models.py        # Persistent application model
+│   ├── database.py      # SQLite configuration and schema
+│   ├── models.py        # SQL operations and data serialization
 │   ├── schemas.py       # Request and response validation
 │   ├── matching.py      # Explainable TF–IDF comparison
 │   └── static/          # Responsive dashboard
